@@ -5,7 +5,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.layers import Layer
 from tensorflow.keras import backend as K
 
-# 自定义 Attention 层
+# self-defined Attention Layer
 class AttentionLayer(Layer):
     def __init__(self, **kwargs):
         super(AttentionLayer, self).__init__(**kwargs)
@@ -26,10 +26,10 @@ class AttentionLayer(Layer):
         context = K.sum(context, axis=1)
         return context
 
-# 加载模型
+# load the model
 model = load_model("textcnn_attention.keras", custom_objects={"AttentionLayer": AttentionLayer})
 
-# 加载 tokenizer
+# load the tokenizer
 with open("tokenizer.pkl", "rb") as f:
     tokenizer = pickle.load(f)
 
@@ -39,11 +39,11 @@ def predict_sentiment(texts, maxlen=60):
     padded = pad_sequences(seqs, maxlen=maxlen)
     preds = model.predict(padded)
 
-    # 手动标签映射
+    # label mapping
     idx_to_label = {0: "bad", 1: "neutral", 2: "good"}
     pred_labels = [idx_to_label[np.argmax(p)] for p in preds]
 
     return pred_labels
 
-# 示例
+# example
 print(predict_sentiment(["I love this product!", "This sucks."]))
